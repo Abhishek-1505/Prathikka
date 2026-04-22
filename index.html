@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Special Day</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Quicksand:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-pink: #ffafbd;
+            --deep-rose: #ff4b2b;
+            --bg-color: #fff0f3;
+            --accent-blue: #a2d2ff;
+        }
+
+        body {
+            margin: 0; padding: 0;
+            font-family: 'Quicksand', sans-serif;
+            background-color: var(--bg-color);
+            background-image: 
+                radial-gradient(var(--primary-pink) 0.5px, transparent 0.5px),
+                url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20 10c-1-2-4-2-5 0-1 2 1 4 5 7 4-3 6-5 5-7-1-2-4-2-5 0z' fill='%23ffc2d1' fill-opacity='0.4'/%3E%3Cpath d='M10 30h4m-2-2v4m15-18l-3 3 1.5 1.5L28 15l-1.5-1.5z' stroke='%23a2d2ff' fill='none'/%3E%3C/svg%3E");
+            display: flex; flex-direction: column; align-items: center; min-height: 100vh; text-align: center;
+        }
+
+        h1 { font-family: 'Dancing Script', cursive; font-size: 3.5rem; color: #d63384; margin-top: 50px; }
+        .subtitle { font-size: 1.1rem; color: #555; margin-bottom: 40px; max-width: 600px; padding: 0 20px; }
+
+        .container { display: flex; gap: 25px; justify-content: center; flex-wrap: wrap; padding: 20px; max-width: 1000px; }
+
+        /* Envelope Styles */
+        .envelope-wrapper {
+            position: relative; width: 280px; height: 180px; background: #fff; border-radius: 15px; cursor: pointer;
+            transition: 0.3s; box-shadow: 0 8px 15px rgba(0,0,0,0.05); display: flex; align-items: center; justify-content: center;
+            overflow: hidden; border: 2px solid transparent;
+        }
+
+        .envelope-wrapper:hover { transform: translateY(-8px); box-shadow: 0 12px 25px rgba(0,0,0,0.1); }
+        .envelope-wrapper.selected { border-color: var(--deep-rose); background: #fff5f5; }
+
+        .envelope-content { padding: 20px; opacity: 0; transition: 0.3s; font-size: 0.95rem; color: #444; line-height: 1.5; }
+        .envelope-wrapper:hover .envelope-content { opacity: 1; }
+        .envelope-label { position: absolute; font-family: 'Dancing Script', cursive; font-size: 1.8rem; color: var(--deep-rose); transition: 0.3s; }
+        .envelope-wrapper:hover .envelope-label { opacity: 0; }
+
+        /* Button Styles */
+        .btn-group { margin-top: 40px; display: flex; flex-direction: column; align-items: center; gap: 15px; margin-bottom: 50px; }
+
+        .main-btn {
+            padding: 15px 45px; font-size: 1.2rem; background: linear-gradient(45deg, #ff4b2b, #ff416c);
+            color: white; border: none; border-radius: 50px; cursor: pointer; font-weight: bold; 
+            box-shadow: 0 4px 15px rgba(255, 75, 43, 0.3); transition: 0.3s;
+        }
+
+        .main-btn:hover { transform: scale(1.05); opacity: 0.9; }
+
+        .sassy-btn {
+            padding: 10px 30px; font-size: 0.9rem; background: #000;
+            color: white; border: none; border-radius: 50px; cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); transition: 0.3s;
+        }
+
+        .sassy-btn:hover { background: #333; transform: scale(1.02); }
+
+        /* Modal Styles */
+        .modal {
+            display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: white; padding: 35px; border-radius: 25px; box-shadow: 0 0 60px rgba(0,0,0,0.2);
+            z-index: 100; width: 300px;
+        }
+
+        .modal h3 { color: var(--deep-rose); font-family: 'Dancing Script', cursive; font-size: 1.8rem; margin: 0 0 15px 0; }
+        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); backdrop-filter: blur(3px); z-index: 99; }
+        
+        input { width: 100%; padding: 12px; margin: 15px 0; border: 1px solid #ddd; border-radius: 10px; box-sizing: border-box; font-family: inherit; }
+    </style>
+</head>
+<body>
+
+    <h1>Hey Prathikka,</h1>
+    <p class="subtitle">My heart rate only stabilizes when we're planning our date. I've narrowed down some options, but you're the specialist here—you decide!</p>
+
+    <div class="container">
+        <div class="envelope-wrapper" onclick="selectOption(this, 'Lunch Date')">
+            <div class="envelope-label">Option 1</div>
+            <div class="envelope-content"><strong>Lunch Date:</strong> We can try the amazing food I've been missing out on in Chennai. Since I'm veg-clueless, I'll need your expert recommendation!</div>
+        </div>
+        <div class="envelope-wrapper" onclick="selectOption(this, 'Arcade + Beach')">
+            <div class="envelope-label">Option 2</div>
+            <div class="envelope-content"><strong>Arcade + Beach:</strong> A cozy arcade session near Besant Nagar beach, followed by a walk near the waves to bring the BP back down.</div>
+        </div>
+        <div class="envelope-wrapper" onclick="selectOption(this, 'Impulsive')">
+            <div class="envelope-label">Option 3</div>
+            <div class="envelope-content"><strong>Impulsive:</strong> No charts, no schedules. Just meet up and let the day take us wherever it wants to go!</div>
+        </div>
+    </div>
+
+    <div class="btn-group">
+        <button class="main-btn" onclick="openModal('date')">Lock It In!</button>
+        <button class="sassy-btn" onclick="openModal('sassy')">All your ideas suck 😅, I'll pick</button>
+    </div>
+
+    <div class="overlay" id="overlay"></div>
+
+    <div class="modal" id="formModal">
+        <h3 id="modalTitle">Perfect choice!</h3>
+        <p id="modalText">When is the doctor available for this appointment?</p>
+        <input type="text" id="timeInput" placeholder="Day and time...">
+        <button class="main-btn" id="submitBtn" onclick="submitData()" style="font-size: 1rem;">Confirm Appointment ✨</button>
+    </div>
+
+    <script>
+        let chosenOption = "";
+        const endpoint = "https://formspree.io/f/xojykray";
+
+        function selectOption(element, val) {
+            document.querySelectorAll('.envelope-wrapper').forEach(el => el.classList.remove('selected'));
+            element.classList.add('selected');
+            chosenOption = val;
+        }
+
+        function openModal(type) {
+            if (type === 'date' && !chosenOption) return alert("Pick an envelope first!");
+            
+            if (type === 'sassy') {
+                chosenOption = "User's Custom Idea";
+                document.getElementById('modalTitle').innerText = "Doctor's Orders!";
+                document.getElementById('modalText').innerText = "Fair enough! What's your better plan and when are we doing it?";
+            } else {
+                document.getElementById('modalTitle').innerText = "Perfect choice!";
+                document.getElementById('modalText').innerText = "When is the doctor available for this appointment?";
+            }
+            
+            document.getElementById('formModal').style.display = 'block';
+            document.getElementById('overlay').style.display = 'block';
+            
+            confetti({ 
+                particleCount: 150, 
+                spread: 70, 
+                origin: { y: 0.6 },
+                colors: ['#ff4b2b', '#ffafbd', '#a2d2ff']
+            });
+        }
+
+        async function submitData() {
+            const time = document.getElementById('timeInput').value;
+            if (!time) return alert("Don't forget to tell me when!");
+            
+            const btn = document.getElementById('submitBtn');
+            btn.innerText = "Sending...";
+            btn.disabled = true;
+
+            try {
+                await fetch(endpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        selection: chosenOption, 
+                        details: time 
+                    })
+                });
+                document.getElementById('formModal').innerHTML = "<h3>It's a Date!</h3><p>Choice recorded. I'll see you then!</p>";
+            } catch (e) {
+                alert("Something went wrong, but text me anyway!");
+            }
+        }
+    </script>
+</body>
+</html>
